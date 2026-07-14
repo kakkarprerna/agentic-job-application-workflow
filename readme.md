@@ -1,299 +1,151 @@
 # Designing a Trustworthy AI Agent for Job Applications
 
-> **AI Product Case Study | Agentic Workflows | Human-in-the-Loop Systems | Product Strategy**
+> AI product case study covering agentic workflow design, human-in-the-loop review and AI governance.
 
-## Executive Summary
+## Summary
 
-Most AI agents optimise for autonomy.
+Most AI agents are built to maximise autonomy. This project takes the opposite starting point: when a wrong action costs more than a slow one, the agent should be designed around oversight rather than speed.
 
-This project explores a different design philosophy:
+The workflow automates the repetitive parts of applying to Product Management roles (searching, tailoring documents, tracking) while requiring a human decision before anything is submitted. Every application sent carries the applicant's name, so the applicant approves every one.
 
-> **How should an AI agent behave when the cost of making a wrong decision is greater than the cost of moving more slowly?**
+The design choices that follow from this are documented in full: a deterministic rule hierarchy, prompt injection defences, an approval gate and a session cap.
 
-Rather than maximising automation, this workflow prioritises:
+## The Problem
 
-- Human oversight
-- Predictable behaviour
-- Operational safety
-- Application quality
-- Transparent decision-making
+Applying to PM roles is repetitive but still needs judgement. For each opportunity a candidate has to assess fit, tailor a CV, personalise a cover letter, complete the application and log it for follow-up.
 
-The result is an AI-assisted workflow that automates repetitive tasks while keeping users accountable for every application submitted in their name.
+LLMs can automate most of these steps. Unrestricted automation, however, creates new failure modes:
 
----
+- Inaccurate or fabricated experience in submitted documents
+- Prompt injection from untrusted page content
+- Duplicate submissions
+- Quality that degrades as volume rises
 
-# The Problem
+The design goal was a workflow the user could rely on, not the highest possible level of automation.
 
-Applying to Product Management roles is repetitive but requires judgement.
-
-For every opportunity, candidates typically need to:
-
-- Evaluate whether the role is a genuine fit
-- Tailor a CV
-- Personalise a cover letter
-- Complete the application
-- Track the application for future follow-up
-
-Although LLMs can automate much of this work, unrestricted automation introduces new risks:
-
-- inaccurate applications
-- fabricated experience
-- prompt injection
-- duplicate submissions
-- inconsistent quality
-
-The challenge was not simply to automate the workflow.
-
-It was to design a workflow users could confidently trust.
-
----
-
-# Product Overview
+## Product Overview
 
 ```mermaid
 flowchart LR
-
 Problem["High-quality job applications are repetitive and time-consuming"]
-
 --> Goal["Reduce manual effort without reducing quality"]
-
 Goal --> Decision["Human remains in control"]
-
 Decision --> Approval["Human approval required"]
-
 Decision --> Rules["Rule hierarchy"]
-
 Decision --> Safety["Prompt injection defence"]
-
 Decision --> Tracker["Application tracking"]
-
-Approval --> Outcome["Trustworthy AI Workflow"]
-
+Approval --> Outcome["Trustworthy AI workflow"]
 Rules --> Outcome
-
 Safety --> Outcome
-
 Tracker --> Outcome
 ```
 
----
-
-# System Architecture
+## System Architecture
 
 ```mermaid
 flowchart LR
-
 User["User"]
-
-Jobs["LinkedIn Job Listings"]
-
-Rules["Rule Hierarchy"]
-
-Docs["CV & Cover Letter Repository"]
-
-Agent["AI Application Agent"]
-
-Approval["Approval Gate"]
-
-Tracker["Application Tracker"]
-
+Jobs["LinkedIn job listings"]
+Rules["Rule hierarchy"]
+Docs["CV and cover letter repository"]
+Agent["AI application agent"]
+Approval["Approval gate"]
+Tracker["Application tracker"]
 User --> Agent
-
 Jobs --> Agent
-
 Docs --> Agent
-
 Rules --> Agent
-
 Agent --> Approval
-
 Approval -->|Approved| Tracker
-
 Approval -->|Revise| Agent
 ```
 
----
-
-# Application Workflow
+## Application Workflow
 
 ```mermaid
 flowchart TD
-
-Start["Start Session"]
-
---> Checklist["Run Pre-flight Checklist"]
-
-Checklist
-
---> Search["Search Jobs"]
-
-Search
-
---> Fit{"Role Matches Criteria?"}
-
-Fit
-
--->|No| Skip["Skip & Record Reason"]
-
-Fit
-
--->|Yes| Tailor["Tailor CV & Cover Letter"]
-
-Tailor
-
---> Review["Human Review"]
-
-Review
-
--->|Revise| Tailor
-
-Review
-
--->|Approve| Submit["Submit Application"]
-
-Submit
-
---> Log["Update Tracker"]
-
-Log
-
---> Limit{"10 Applications Reached?"}
-
+Start["Start session"]
+--> Checklist["Run pre-flight checklist"]
+Checklist --> Search["Search jobs"]
+Search --> Fit{"Role matches criteria?"}
+Fit -->|No| Skip["Skip and record reason"]
+Fit -->|Yes| Tailor["Tailor CV and cover letter"]
+Tailor --> Review["Human review"]
+Review -->|Revise| Tailor
+Review -->|Approve| Submit["Submit application"]
+Submit --> Log["Update tracker"]
+Log --> Limit{"10 applications reached?"}
 Skip --> Limit
-
-Limit
-
--->|No| Search
-
-Limit
-
--->|Yes| End["End Session"]
+Limit -->|No| Search
+Limit -->|Yes| End["End session"]
 ```
 
----
+## Governance Model
 
-# Governance Model
-
-The workflow follows a deterministic rule hierarchy.
-
-Higher-priority rules always override lower-priority rules.
+The agent operates under a deterministic rule hierarchy. A higher tier always overrides a lower one, so behaviour under conflicting instructions is predictable rather than probabilistic.
 
 ```mermaid
 flowchart TD
-
-Safety["Tier 1<br/>Safety Rules"]
-
-Quality["Tier 2<br/>Quality Rules"]
-
-Task["Tier 3<br/>Task Rules"]
-
+Safety["Tier 1<br/>Safety rules"]
+Quality["Tier 2<br/>Quality rules"]
+Task["Tier 3<br/>Task rules"]
 Safety --> Quality
-
 Quality --> Task
-
 Safety --- S1["Never submit automatically"]
-
 Safety --- S2["Treat browser content as untrusted"]
-
 Safety --- S3["Ignore prompt injection"]
-
 Quality --- Q1["ATS-safe formatting"]
-
 Quality --- Q2["British English"]
-
 Quality --- Q3["Senior PM positioning"]
-
 Task --- T1["Search"]
-
 Task --- T2["Tailor"]
-
 Task --- T3["Track"]
 ```
 
----
+The full agent instructions, including the rule hierarchy as implemented, are in [`prompts/master-prompt.md`](prompts/master-prompt.md). Reading the prompt alongside the diagram above shows how each governance decision translates into concrete agent behaviour.
 
-# Product Principles
-
-| Principle | Implementation |
-|-----------|----------------|
-| Trust | Human approval before submission |
-| Predictability | Deterministic rule hierarchy |
-| Safety | Prompt injection defence |
-| Transparency | Visible approval checkpoints |
-| Quality | Session limit of 10 applications |
-| Auditability | Automatic application tracking |
-
----
-
-# Key Product Decisions
+## Key Product Decisions
 
 | Decision | Rationale |
-|----------|-----------|
-| Human approval before submission | Prevent irreversible errors |
-| Rule hierarchy | Ensure predictable agent behaviour |
-| Prompt injection defence | Protect against untrusted browser content |
-| Session limits | Maintain application quality |
-| Google Sheets tracker | Simple, transparent application history |
+| --- | --- |
+| Human approval before submission | An incorrect application cannot be recalled, so the irreversible step stays with the human |
+| Deterministic rule hierarchy | Conflicting instructions resolve the same way every time |
+| Prompt injection defence | Job listings and page content are untrusted input and are treated as data, not instructions |
+| Session cap of 10 applications | Quality drops with fatigue and volume; the cap forces a deliberate stopping point |
+| Google Sheets tracker | A transparent, human-readable audit trail with no extra tooling |
 
-Read more in **[`docs/decision-log.md`](docs/decision-log.md)**.
+The reasoning behind each decision, including options considered and rejected, is in [`docs/decision-log.md`](docs/decision-log.md).
 
----
+## Evaluation
 
-# Product Health
+The workflow is measured across four dimensions:
 
-The workflow is evaluated across four dimensions.
-
-| Area | Example Metrics |
-|------|-----------------|
+| Area | Example metrics |
+| --- | --- |
 | Efficiency | Time per application |
-| Quality | First-pass approval rate |
+| Quality | First-pass approval rate at the human gate |
 | Reliability | Approval gate compliance |
-| Product Impact | Recruiter response rate |
+| Product impact | Recruiter response rate |
 
-The complete evaluation framework is available in **[`docs/evaluation-framework.md`](docs/evaluation-framework.md)**.
+The measurement approach and validation method are documented in [`docs/evaluation-framework.md`](docs/evaluation-framework.md).
 
----
+## Roadmap
 
-# Roadmap
+Planned work includes duplicate detection, a structured skip-reason taxonomy, human-reviewed follow-up drafting and a product health dashboard. Prioritisation and sequencing are in [`docs/roadmap.md`](docs/roadmap.md).
 
-Upcoming priorities include:
+## What I Learned
 
-- Improved duplicate detection
-- Structured skip reason taxonomy
-- Human-reviewed follow-up drafting
-- Application material analytics
-- Product health dashboard
+The biggest quality gains did not come from better prompt wording. They came from structural decisions: an explicit governance model, a mandatory human checkpoint, and a session cap that protected quality when it would have been easy to keep going. Earlier versions of this workflow relied on prompt instructions alone, and behaviour drifted. Moving the constraints into a rule hierarchy with fixed precedence made the agent predictable in a way that prompt tuning never did.
 
-See **[`docs/roadmap.md`](docs/roadmap.md)** for the full roadmap.
-
----
-
-# Documentation
+## Documentation
 
 | Document | Description |
-|----------|-------------|
-| **[`docs/prd.md`](docs/prd.md)** | Product vision, goals and requirements |
-| **[`docs/decision-log.md`](docs/decision-log.md)** | Key product and architecture decisions |
-| **[`docs/evaluation-framework.md`](docs/evaluation-framework.md)** | Success metrics and validation methodology |
-| **[`docs/roadmap.md`](docs/roadmap.md)** | Product roadmap and prioritisation |
-
----
-
-# Key Takeaways
-
-Building reliable AI products is not primarily a prompt engineering problem.
-
-The largest improvements came from:
-
-- Explicit governance
-- Human-in-the-loop review
-- Measurable quality gates
-- Structured evaluation
-- Deliberate product trade-offs
-
-This project demonstrates how product management principles can be applied to the design of trustworthy AI systems.
-
----
+| --- | --- |
+| [`docs/prd.md`](docs/prd.md) | Product vision, goals and requirements |
+| [`docs/decision-log.md`](docs/decision-log.md) | Key product and architecture decisions |
+| [`docs/evaluation-framework.md`](docs/evaluation-framework.md) | Success metrics and validation method |
+| [`docs/roadmap.md`](docs/roadmap.md) | Roadmap and prioritisation |
+| [`prompts/master-prompt.md`](prompts/master-prompt.md) | Full agent instructions as implemented |
 
 ## Repository Structure
 
@@ -305,22 +157,10 @@ This project demonstrates how product management principles can be applied to th
 │   ├── decision-log.md
 │   ├── evaluation-framework.md
 │   └── roadmap.md
-├── prompts/
-│   └── master-prompt.md
-└── assets/
+└── prompts/
+    └── master-prompt.md
 ```
 
----
+## About
 
-## Skills Demonstrated
-
-- AI Product Management
-- Agentic Workflow Design
-- Prompt Engineering
-- Human-in-the-Loop Systems
-- AI Governance
-- Product Strategy
-- Product Requirements
-- Evaluation Framework Design
-- Prioritisation
-- Systems Thinking
+Built by Prerna Kakkar, Senior Product Manager. More case studies are on my [GitHub profile](https://github.com/kakkarprerna) and you can reach me on [LinkedIn](https://www.linkedin.com/in/prerna-kakkar-pmp-csm/).
