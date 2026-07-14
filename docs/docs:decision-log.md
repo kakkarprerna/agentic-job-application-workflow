@@ -1,0 +1,228 @@
+# Architecture Decision Records (ADRs)
+
+This document captures the key product and technical decisions made during the development of the workflow.
+
+Each Architecture Decision Record (ADR) explains:
+
+- **Context** — the problem being solved
+- **Decision** — the chosen approach
+- **Alternatives Considered** — other options evaluated
+- **Consequences** — benefits and trade-offs
+- **Status** — whether the decision is active or superseded
+
+The goal is to document *why* decisions were made, not just *what* was built.
+
+---
+
+# ADR-001 — Human Approval Before Submission
+
+**Status**
+
+✅ Accepted (v1)
+
+## Context
+
+The workflow was capable of submitting applications automatically.
+
+While this maximised efficiency, every submission represented the user's professional identity. An incorrect application could not be recalled once submitted.
+
+## Decision
+
+Require explicit human approval before every application submission.
+
+No exceptions are permitted, regardless of confidence or perceived role fit.
+
+## Alternatives Considered
+
+- Fully autonomous submission
+- Review only cover letters
+- Random sampling (e.g. review one in every five applications)
+
+## Consequences
+
+### Benefits
+
+- Eliminates unintended submissions
+- Maintains user trust
+- Prevents inaccurate applications
+
+### Trade-offs
+
+- Lower application throughput
+- Additional review time for every submission
+
+---
+
+# ADR-002 — Rule Hierarchy Instead of Flat Instructions
+
+**Status**
+
+✅ Accepted (v2)
+
+## Context
+
+The original workflow used a single list of instructions.
+
+During longer sessions, newer context occasionally influenced behaviour more than earlier instructions, resulting in inconsistent application quality.
+
+## Decision
+
+Introduce an explicit three-tier rule hierarchy:
+
+1. Safety
+2. Quality
+3. Task
+
+Lower-priority rules can never override higher-priority rules.
+
+## Alternatives Considered
+
+- Longer flat prompt
+- Repeating important rules throughout the prompt
+- Multiple prompts for different workflow stages
+
+## Consequences
+
+### Benefits
+
+- More predictable behaviour
+- Improved consistency
+- Easier maintenance
+
+### Trade-offs
+
+- Longer master prompt
+- More effort required when updating rules
+
+---
+
+# ADR-003 — Treat Browser Content as Untrusted
+
+**Status**
+
+✅ Accepted (v3)
+
+## Context
+
+Job descriptions originate from third-party websites and may contain instructions intended to manipulate AI systems.
+
+Even legitimate listings may accidentally include text that conflicts with workflow behaviour.
+
+## Decision
+
+Treat all browser content as data rather than instructions.
+
+Any embedded prompt-like content is ignored and surfaced to the user if necessary.
+
+## Alternatives Considered
+
+- Keyword blocklists
+- Trust listings from verified employers
+- Ignore only known prompt injection patterns
+
+## Consequences
+
+### Benefits
+
+- Protects against prompt injection
+- Predictable behaviour
+- Stronger operational safety
+
+### Trade-offs
+
+- Occasional false positives
+- Additional user review in edge cases
+
+---
+
+# ADR-004 — Session Limit
+
+**Status**
+
+✅ Accepted (v2)
+
+## Context
+
+As tailoring became increasingly automated, the limiting factor shifted from generation speed to decision quality.
+
+Long application sessions introduced review fatigue and reduced consistency.
+
+## Decision
+
+Limit every session to a maximum of ten submitted applications.
+
+The workflow enforces this limit automatically.
+
+## Alternatives Considered
+
+- No limit
+- Time-based session limits
+- Soft warning after ten applications
+
+## Consequences
+
+### Benefits
+
+- More consistent review quality
+- Reduced decision fatigue
+- Better application targeting
+
+### Trade-offs
+
+- Lower daily throughput
+- Some suitable roles deferred to future sessions
+
+---
+
+# ADR-005 — Google Sheets for Application Tracking
+
+**Status**
+
+✅ Accepted (v1)
+
+## Context
+
+Application history needed to persist across sessions while remaining easy to inspect and edit.
+
+The solution also needed minimal setup and low operational overhead.
+
+## Decision
+
+Store application history in Google Sheets using a fixed schema.
+
+## Alternatives Considered
+
+- Supabase
+- Notion
+- Local CSV
+- SQLite
+
+## Consequences
+
+### Benefits
+
+- Zero infrastructure
+- Familiar interface
+- Easy manual corrections
+- Accessible outside the workflow
+
+### Trade-offs
+
+- No relational queries
+- Manual schema management
+- Limited scalability
+
+---
+
+# Key Lessons
+
+Across all five decisions, a consistent pattern emerged.
+
+The workflow deliberately prioritises:
+
+- Trust over autonomy
+- Predictability over flexibility
+- Quality over throughput
+- Transparency over hidden automation
+
+These principles shaped the product more than any individual prompt or implementation detail.
