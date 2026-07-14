@@ -151,7 +151,7 @@ The biggest quality gains did not come from better prompt wording. They came fro
 
 ```
 .
-├── readme.md
+├── README.md
 ├── docs/
 │   ├── prd.md
 │   ├── decision-log.md
