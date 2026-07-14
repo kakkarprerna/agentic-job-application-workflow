@@ -103,6 +103,7 @@ Task --- T3["Track"]
 ```
 
 The full agent instructions, including the rule hierarchy as implemented, are in [`prompts/master-prompt.md`](prompts/master-prompt.md). Reading the prompt alongside the diagram above shows how each governance decision translates into concrete agent behaviour.
+The rule hierarchy was not designed in one pass. [`docs/prompt-evolution.md`](docs/prompt-evolution.md) records how the agent instructions changed across versions and what each revision fixed.
 
 ## Key Product Decisions
 
@@ -137,6 +138,8 @@ Planned work includes duplicate detection, a structured skip-reason taxonomy, hu
 
 The biggest quality gains did not come from better prompt wording. They came from structural decisions: an explicit governance model, a mandatory human checkpoint, and a session cap that protected quality when it would have been easy to keep going. Earlier versions of this workflow relied on prompt instructions alone, and behaviour drifted. Moving the constraints into a rule hierarchy with fixed precedence made the agent predictable in a way that prompt tuning never did.
 
+A fuller account of what worked, what failed and what I would build differently is in [`docs/retrospective.md`](docs/retrospective.md).
+
 ## Documentation
 
 | Document | Description |
@@ -146,6 +149,8 @@ The biggest quality gains did not come from better prompt wording. They came fro
 | [`docs/evaluation-framework.md`](docs/evaluation-framework.md) | Success metrics and validation method |
 | [`docs/roadmap.md`](docs/roadmap.md) | Roadmap and prioritisation |
 | [`prompts/master-prompt.md`](prompts/master-prompt.md) | Full agent instructions as implemented |
+| [`docs/prompt-evolution.md`](docs/prompt-evolution.md) | How the agent instructions evolved across versions |
+| [`docs/retrospective.md`](docs/retrospective.md) | Retrospective on outcomes and lessons |
 
 ## Repository Structure
 
@@ -157,6 +162,8 @@ The biggest quality gains did not come from better prompt wording. They came fro
 │   ├── decision-log.md
 │   ├── evaluation-framework.md
 │   └── roadmap.md
+│   ├── prompt-evolution.md
+│   └── retrospective.md
 └── prompts/
     └── master-prompt.md
 ```
