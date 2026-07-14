@@ -299,7 +299,7 @@ This project demonstrates how product management principles can be applied to th
 
 ```
 .
-├── README.md
+├── readme.md
 ├── docs/
 │   ├── prd.md
 │   ├── decision-log.md
