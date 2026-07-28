@@ -151,6 +151,7 @@ A fuller account of what worked, what failed and what I would build differently 
 | [`prompts/master-prompt.md`](prompts/master-prompt.md) | Full agent instructions as implemented |
 | [`docs/prompt-evolution.md`](docs/prompt-evolution.md) | How the agent instructions evolved across versions |
 | [`docs/retrospective.md`](docs/retrospective.md) | Retrospective on outcomes and lessons |
+| [`prototype/`](prototype/) | Interactive demo of the governance model above: batch evaluation, the match score rubric, prompt injection defence, duplicate detection, the approval gate, the session cap, and the tracker |
 
 ## Repository Structure
 
@@ -164,8 +165,10 @@ A fuller account of what worked, what failed and what I would build differently 
 │   └── roadmap.md
 │   ├── prompt-evolution.md
 │   └── retrospective.md
-└── prompts/
-    └── master-prompt.md
+├── prompts/
+│   └── master-prompt.md
+└── prototype/
+    └── src/            # React + TypeScript + Tailwind interactive demo
 ```
 
 ## About
