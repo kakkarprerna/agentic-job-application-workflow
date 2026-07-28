@@ -10,6 +10,18 @@ The workflow automates the repetitive parts of applying to Product Management ro
 
 The design choices that follow from this are documented in full: a deterministic rule hierarchy, prompt injection defences, an approval gate and a session cap.
 
+## Live Prototype
+
+The governance model below is not only documented, it runs. [`prototype/`](prototype) is a working interactive build of the exact rule hierarchy described in this README and implemented in [`prompts/master-prompt.md`](prompts/master-prompt.md): the weighted match score rubric, batch evaluation of five roles at a time, prompt injection defence, duplicate detection, mandatory human approval, and the session cap of 10.
+
+To run it locally:
+
+```bash
+cd prototype
+npm install
+npm run dev
+```
+
 ## The Problem
 
 Applying to PM roles is repetitive but still needs judgement. For each opportunity a candidate has to assess fit, tailor a CV, personalise a cover letter, complete the application and log it for follow-up.
@@ -151,26 +163,21 @@ A fuller account of what worked, what failed and what I would build differently 
 | [`prompts/master-prompt.md`](prompts/master-prompt.md) | Full agent instructions as implemented |
 | [`docs/prompt-evolution.md`](docs/prompt-evolution.md) | How the agent instructions evolved across versions |
 | [`docs/retrospective.md`](docs/retrospective.md) | Retrospective on outcomes and lessons |
-| [`prototype/`](prototype/) | Interactive demo of the governance model above: batch evaluation, the match score rubric, prompt injection defence, duplicate detection, the approval gate, the session cap, and the tracker |
+| [`prototype/`](prototype) | Working interactive build of the governance model above |
 
 ## Repository Structure
-
-```
-.
 ├── README.md
 ├── docs/
-│   ├── prd.md
-│   ├── decision-log.md
-│   ├── evaluation-framework.md
-│   └── roadmap.md
-│   ├── prompt-evolution.md
-│   └── retrospective.md
+│ ├── prd.md
+│ ├── decision-log.md
+│ ├── evaluation-framework.md
+│ └── roadmap.md
+│ ├── prompt-evolution.md
+│ └── retrospective.md
 ├── prompts/
-│   └── master-prompt.md
+│ └── master-prompt.md
 └── prototype/
-    └── src/            # React + TypeScript + Tailwind interactive demo
-```
-
+└── (working React implementation of the governance model)
 ## About
 
 Built by Prerna Kakkar, Senior Product Manager. More case studies are on my [GitHub profile](https://github.com/kakkarprerna) and you can reach me on [LinkedIn](https://www.linkedin.com/in/prerna-kakkar-pmp-csm/).
