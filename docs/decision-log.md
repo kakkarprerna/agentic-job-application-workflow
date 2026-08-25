@@ -214,9 +214,44 @@ Store application history in Google Sheets using a fixed schema.
 
 ---
 
+# ADR-006 — Separate Explicit Requirements from Model Assumptions in Match Scoring
+
+**Status**
+
+✅ Accepted (v5)
+
+## Context
+
+The requirements coverage component of the match score rubric occasionally reflected requirements the evaluator inferred from a job title or industry convention, rather than requirements stated in the posting. This produced scores below the apply threshold for roles that were, on the literal text, a strong fit, and the gap was only caught through manual re-evaluation.
+
+## Decision
+
+Extract explicit requirements from the posting before scoring. Score requirements coverage only against that list. Log any requirement the evaluator is inferring beyond the literal text as a separate, visible assumption with a risk level, rather than letting it silently affect the score.
+
+## Alternatives Considered
+
+- Manually re-reading every below-threshold role before skipping it
+- Lowering the apply threshold to catch more false negatives
+- Asking the evaluator to "consider the full context" of the role, without separating explicit and inferred requirements
+
+## Consequences
+
+### Benefits
+
+- Requirements coverage score is traceable to specific posting text
+- Assumptions are visible at review time instead of surfacing only after manual pushback
+- Reduces false negatives without lowering the apply threshold
+
+### Trade-offs
+
+- Slightly longer evaluation output per role
+- Depends on the evaluator consistently distinguishing "stated" from "implied," which varies with posting quality
+
+---
+
 # Key Lessons
 
-Across all five decisions, a consistent pattern emerged.
+Across all six decisions, a consistent pattern emerged.
 
 The workflow deliberately prioritises:
 
@@ -224,5 +259,6 @@ The workflow deliberately prioritises:
 - Predictability over flexibility
 - Quality over throughput
 - Transparency over hidden automation
+- Visible reasoning over invisible inference
 
 These principles shaped the product more than any individual prompt or implementation detail.

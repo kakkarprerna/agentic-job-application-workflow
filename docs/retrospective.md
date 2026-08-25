@@ -11,6 +11,7 @@
 - Duplicate detection
 - Free-text skip reasons
 - Prompt maintenance overhead
+- Requirements coverage scoring conflated explicit posting text with inferred assumptions, until v5
 
 ## Biggest lesson
 

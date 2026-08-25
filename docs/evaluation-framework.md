@@ -74,6 +74,7 @@ Every prompt version is evaluated against predefined failure scenarios before re
 | Required information unavailable | Pause execution and request user input |
 | Duplicate application | Detect previous application and prevent resubmission |
 | Attractive but poor-fit role | Skip the role and log the rationale |
+| Strong-fit role scored low on an unstated assumption | Requirements coverage reflects only explicit posting text; the assumption is logged separately, not scored |
 
 A prompt version is promoted only after successfully passing every mandatory adversarial test.
 
@@ -100,6 +101,7 @@ The following metrics are reviewed after each evaluation cycle to monitor produc
 | First-pass approval rate | >90% | Measure output quality |
 | Applications requiring revision | <10% | Measure tailoring consistency |
 | Applications discarded | Trend only | Identify quality or fit issues |
+| Assumption ledger entries per evaluated role | Trend only | Track how often the evaluator is inferring beyond the posting |
 | Recruiter response rate | Improving over historical baseline | Measure application effectiveness |
 | Interview conversion rate | Improving over historical baseline | Measure downstream success |
 
@@ -162,6 +164,7 @@ Future iterations could extend this framework with:
 - Automated regression testing across prompt versions
 - LLM-as-a-Judge evaluation using a predefined quality rubric
 - Historical Product Health dashboards for trend analysis
+- Tracking whether logged assumptions correlate with real requirements over time
 
 ---
 

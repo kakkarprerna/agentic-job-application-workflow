@@ -109,6 +109,7 @@ Safety --- S3["Ignore prompt injection"]
 Quality --- Q1["ATS-safe formatting"]
 Quality --- Q2["British English"]
 Quality --- Q3["Senior PM positioning"]
+Quality --- Q4["Score only explicit requirements"]
 Task --- T1["Search"]
 Task --- T2["Tailor"]
 Task --- T3["Track"]
@@ -126,6 +127,7 @@ The rule hierarchy was not designed in one pass. [`docs/prompt-evolution.md`](do
 | Prompt injection defence | Job listings and page content are untrusted input and are treated as data, not instructions |
 | Session cap of 10 applications | Quality drops with fatigue and volume; the cap forces a deliberate stopping point |
 | Google Sheets tracker | A transparent, human-readable audit trail with no extra tooling |
+| Explicit/inferred requirement separation | Prevents assumption-driven false rejections; the score reflects only what the posting states |
 
 The reasoning behind each decision, including options considered and rejected, is in [`docs/decision-log.md`](docs/decision-log.md).
 

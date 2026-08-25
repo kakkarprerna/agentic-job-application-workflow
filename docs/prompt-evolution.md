@@ -268,17 +268,51 @@ Governance from Version 3 remained fully intact. Throughput improved without giv
 
 ---
 
+# Version 5
+
+## Goal
+
+Fix a specific scoring failure that batch evaluation had made easier to miss: the requirements coverage score sometimes reflected what the evaluator assumed a role needed rather than what the posting actually asked for. A handful of roles worth applying to were scored below the apply threshold and nearly skipped.
+
+---
+
+## Major Changes
+
+### Explicit Requirements Extraction
+
+Before scoring requirements coverage, the workflow now extracts only the requirements stated literally in the posting: named skills, years of experience, certifications, domain background. Anything the model would otherwise infer from a job title or industry convention is excluded from this list.
+
+---
+
+### Assumption Ledger
+
+Any requirement the evaluator is tempted to infer beyond the literal posting text is now logged separately as an assumption, tagged with a risk level, and shown alongside the score rather than folded into it.
+
+---
+
+### Two-Pass Requirements Coverage Scoring
+
+Requirements coverage (25 points) is scored only against the explicit list. The assumption ledger is visible at review time, so a human can see which inferences, if any, would have changed the outcome, instead of the gap surfacing only after a manual re-evaluation.
+
+---
+
+## Results
+
+Version 5 did not change the rubric's weighting or the approval gate. It changed what the requirements coverage score was allowed to be built from. Roles that previously scored below threshold on an assumed requirement now score on what the posting actually said, with the assumption visible rather than silently subtracted.
+
+---
+
 # Evolution Summary
 
-| Area | Version 1 | Version 2 | Version 3 | Version 4 |
-|-------|-----------|-----------|-----------|-----------|
-| Rule Structure | Flat instructions | Rule hierarchy | Rule hierarchy + governance | Governance + candidate facts layer |
-| Safety | Minimal | Approval improvements | Prompt injection defence | Defence extended to external ATS sites |
-| Quality | Manual judgement | Structured tailoring | Measurable evaluation | Weighted match score rubric |
-| Workflow | Flexible | Structured | Governed | Governed + batch evaluation |
-| Tracking | Basic | Improved | Fully integrated | Enriched with prioritisation signals |
-| Evaluation | Subjective | Partial | Framework-driven | Comparative, five roles at a time |
-| Documents | Manual generation | Manual generation | Manual generation | Automatic Word + PDF output |
+| Area | Version 1 | Version 2 | Version 3 | Version 4 | Version 5 |
+|-------|-----------|-----------|-----------|-----------|-----------|
+| Rule Structure | Flat instructions | Rule hierarchy | Rule hierarchy + governance | Governance + candidate facts layer | Unchanged |
+| Safety | Minimal | Approval improvements | Prompt injection defence | Defence extended to external ATS sites | Unchanged |
+| Quality | Manual judgement | Structured tailoring | Measurable evaluation | Weighted match score rubric | Rubric scored only against explicit requirements |
+| Workflow | Flexible | Structured | Governed | Governed + batch evaluation | Unchanged |
+| Tracking | Basic | Improved | Fully integrated | Enriched with prioritisation signals | Unchanged |
+| Evaluation | Subjective | Partial | Framework-driven | Comparative, five roles at a time | Assumption ledger surfaced at review |
+| Documents | Manual generation | Manual generation | Manual generation | Automatic Word + PDF output | Unchanged |
 
 ---
 
@@ -328,6 +362,12 @@ Scoring five at a time answered a better question: "which of these roles deserve
 
 ---
 
+## An Unscored Assumption Is Still a Decision
+
+A rubric can be fully documented and still hide a judgement call. The requirements coverage score looked objective because it was a number, but the number sometimes rested on an assumption about the role that was never written down anywhere. Making the assumption visible mattered more than adjusting the weighting.
+
+---
+
 # Future Evolution
 
 Potential future iterations include:
@@ -339,6 +379,7 @@ Potential future iterations include:
 - multi-platform support
 - automated regression testing
 - prompt version benchmarking
+- tracking how often assumption ledger entries turn out to reflect a real requirement
 
 ---
 
