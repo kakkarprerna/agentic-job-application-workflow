@@ -12,7 +12,7 @@ The design choices that follow from this are documented in full: a deterministic
 
 ## Live Prototype
 
-The governance model below is not only documented, it runs. [`prototype/`](prototype) is a working interactive build of the exact rule hierarchy described in this README and implemented in [`prompts/master-prompt.md`](prompts/master-prompt.md): the weighted match score rubric, batch evaluation of five roles at a time, prompt injection defence, duplicate detection, mandatory human approval, and the session cap of 10.
+The governance model below is not only documented, it runs. [`prototype/`](prototype) is a working interactive build of the rule hierarchy described in this README: the weighted match score rubric, batch evaluation of five roles at a time, prompt injection defence, duplicate detection, mandatory human approval, and the session cap of 10. [`prompts/master-prompt.md`](prompts/master-prompt.md) has a redacted excerpt of the underlying agent instructions.
 
 To run it locally:
 
@@ -115,7 +115,7 @@ Task --- T2["Tailor"]
 Task --- T3["Track"]
 ```
 
-The full agent instructions, including the rule hierarchy as implemented, are in [`prompts/master-prompt.md`](prompts/master-prompt.md). Reading the prompt alongside the diagram above shows how each governance decision translates into concrete agent behaviour.
+A redacted, representative excerpt of the agent instructions, showing the rule hierarchy as implemented, is in [`prompts/master-prompt.md`](prompts/master-prompt.md). Candidate-specific facts and a few implementation details are replaced with placeholders; the rules and evaluation logic are accurate to the production prompt. Reading the excerpt alongside the diagram above shows how each governance decision translates into concrete agent behaviour.
 The rule hierarchy was not designed in one pass. [`docs/prompt-evolution.md`](docs/prompt-evolution.md) records how the agent instructions changed across versions and what each revision fixed.
 
 ## Key Product Decisions
@@ -162,7 +162,7 @@ A fuller account of what worked, what failed and what I would build differently 
 | [`docs/decision-log.md`](docs/decision-log.md) | Key product and architecture decisions |
 | [`docs/evaluation-framework.md`](docs/evaluation-framework.md) | Success metrics and validation method |
 | [`docs/roadmap.md`](docs/roadmap.md) | Roadmap and prioritisation |
-| [`prompts/master-prompt.md`](prompts/master-prompt.md) | Full agent instructions as implemented |
+| [`prompts/master-prompt.md`](prompts/master-prompt.md) | Redacted, representative excerpt of the agent instructions |
 | [`docs/prompt-evolution.md`](docs/prompt-evolution.md) | How the agent instructions evolved across versions |
 | [`docs/retrospective.md`](docs/retrospective.md) | Retrospective on outcomes and lessons |
 | [`prototype/`](prototype) | Working interactive build of the governance model above |
